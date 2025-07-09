@@ -105,8 +105,8 @@ function PersonCard({ person, stories }) {
       {isExpanded && (
         <div className="border-t border-gray-200 p-6 bg-gray-50">
           <div className="space-y-4">
-            {stories.map((story, index) => (
-              <div key={index} className="bg-white rounded border p-4">
+            {stories.map((story) => (
+              <div key={story.id} className="bg-white rounded border p-4">
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {story.title}
                 </h3>

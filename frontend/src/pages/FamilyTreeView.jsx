@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getFamilyTree, addRelationship, updatePersonGender, updatePersonBirthDate, updatePersonDeathDate, postPerson, addFriendship, getRelationships, getFriendships, deleteRelationship, deleteFriendship } from '../api';
+import { fetchFamilyTree, addRelationship, updatePersonGender, updatePersonBirthDate, updatePersonDeathDate, addPerson, addFriendship, fetchRelationships, fetchFriendships, deleteRelationship, deleteFriendship } from '../api';
 import PersonAvatar from '../PersonAvatar';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function FamilyTreeView() {
   const [familyData, setFamilyData] = useState([]);
@@ -16,16 +17,19 @@ export default function FamilyTreeView() {
   const [editForm, setEditForm] = useState({});
   const [relationships, setRelationships] = useState([]);
   const [friendships, setFriendships] = useState([]);
+  const { user } = useAuth();
 
   useEffect(() => {
-    loadFamilyTree();
-    loadRelationships();
-    loadFriendships();
-  }, []);
+    if (user) {
+      loadFamilyTree();
+      loadRelationships();
+      loadFriendships();
+    }
+  }, [user]);
 
   const loadFamilyTree = async () => {
     try {
-      const data = await getFamilyTree();
+      const data = await fetchFamilyTree();
       setFamilyData(data);
     } catch (error) {
       console.error('Failed to load family tree:', error);
@@ -36,7 +40,7 @@ export default function FamilyTreeView() {
 
   const loadRelationships = async () => {
     try {
-      const data = await getRelationships();
+      const data = await fetchRelationships();
       setRelationships(data);
     } catch (error) {
       setRelationships([]);
@@ -45,7 +49,7 @@ export default function FamilyTreeView() {
 
   const loadFriendships = async () => {
     try {
-      const data = await getFriendships();
+      const data = await fetchFriendships();
       setFriendships(data);
     } catch (error) {
       setFriendships([]);
@@ -54,10 +58,10 @@ export default function FamilyTreeView() {
 
   const handleAddPerson = async (e) => {
     e.preventDefault();
-    if (!newPerson.name.trim()) return;
+    if (!newPerson.name.trim() || !user) return;
 
     try {
-      await postPerson({
+      await addPerson({
         name: newPerson.name.trim(),
         gender: newPerson.gender || null,
         birth_date: newPerson.birthDate || null
@@ -73,10 +77,14 @@ export default function FamilyTreeView() {
 
   const handleAddRelationship = async (e) => {
     e.preventDefault();
-    if (!newRelationship.parent || !newRelationship.child) return;
+    if (!newRelationship.parent || !newRelationship.child || !user) return;
 
     try {
-      await addRelationship(newRelationship.parent, newRelationship.child);
+      await addRelationship({
+        parent_name: newRelationship.parent,
+        child_name: newRelationship.child,
+        relationship_type: "parent-child"
+      });
       setNewRelationship({ parent: '', child: '' });
       setShowAddRelationship(false);
       loadFamilyTree(); // Reload to show new relationship
@@ -88,9 +96,12 @@ export default function FamilyTreeView() {
 
   const handleAddFriendship = async (e) => {
     e.preventDefault();
-    if (!newFriendship.person1 || !newFriendship.person2 || newFriendship.person1 === newFriendship.person2) return;
+    if (!newFriendship.person1 || !newFriendship.person2 || newFriendship.person1 === newFriendship.person2 || !user) return;
     try {
-      await addFriendship(newFriendship.person1, newFriendship.person2);
+      await addFriendship({
+        person1: newFriendship.person1,
+        person2: newFriendship.person2
+      });
       setNewFriendship({ person1: '', person2: '' });
       setShowAddFriendship(false);
       loadFamilyTree();
@@ -265,6 +276,15 @@ export default function FamilyTreeView() {
       </div>
     );
   };
+
+  if (!user) {
+    return (
+      <div className="p-4 max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold text-blue-600 mb-6">Family Tree</h1>
+        <p className="text-gray-600">Please log in to view and manage your family tree.</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

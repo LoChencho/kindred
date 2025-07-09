@@ -4,7 +4,7 @@ import PersonAvatar from './PersonAvatar';
 
 const API_URL = 'http://localhost:8000'; // adjust if needed
 
-function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, onPeopleUpdate, onLocationUpdate }) {
+function StoryCard({ story, onTitleUpdate, handleDelete, onDateUpdate, onPeopleUpdate, onLocationUpdate }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState(story.title);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -44,8 +44,8 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
         console.log("Saving new title:", editedTitle);
 
         try {
-            await patchStoryTitle(index, editedTitle);
-            onTitleUpdate(index, editedTitle); // update local state in App
+            await patchStoryTitle(story.id, editedTitle);
+            onTitleUpdate(story.id, editedTitle); // update local state in App
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to update title:", error);
@@ -68,7 +68,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
         setUploadingPhoto(true);
         setPhotoError('');
         try {
-            const uploadRes = await uploadStoryPhotos(index, photoFiles);
+            const uploadRes = await uploadStoryPhotos(story.id, photoFiles);
             if (uploadRes && uploadRes.all_photos) {
                 story.photos = uploadRes.all_photos;
                 setShowPhotoInput(false);
@@ -90,7 +90,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
                 <div className="flex flex-wrap gap-2 mb-4">
                     {story.photos.map((photoUrl, idx) => (
                         <img
-                            key={idx}
+                            key={`${story.id}-photo-${idx}`}
                             src={photoUrl.startsWith('http') ? photoUrl : `${API_URL}${photoUrl}`}
                             alt={`Story Photo ${idx + 1}`}
                             className="w-32 h-32 object-cover rounded"
@@ -146,7 +146,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
                         <div className="mt-3 flex flex-wrap gap-2 items-center">
                             <span className="text-sm text-gray-600">People:</span>
                             {story.people.map((person, idx) => (
-                                <div key={idx} className="flex items-center gap-1">
+                                <div key={`${story.id}-person-${idx}`} className="flex items-center gap-1">
                                     <PersonAvatar personName={person} size="small" />
                                     <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                                         {person}
@@ -223,7 +223,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
                                 className="px-4 py-2 hover:bg-red-100 text-red-600 cursor-pointer"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDelete(index);
+                                    handleDelete(story.id);
                                     setMenuVisible(false);
                                 }}
                             >
@@ -242,7 +242,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
                             <button
                                 className="!bg-blue-600 text-white px-2 py-1 rounded hover:!bg-blue-700"
                                 onClick={() => {
-                                    onDateUpdate(index, dateInputValue);
+                                    onDateUpdate(story.id, dateInputValue);
                                     setShowDateInput(false);
                                 }}
                             >
@@ -270,7 +270,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
                                     const peopleArray = peopleInputValue.trim() 
                                         ? peopleInputValue.split(',').map(p => p.trim()).filter(p => p.length > 0)
                                         : [];
-                                    onPeopleUpdate(index, peopleArray);
+                                    onPeopleUpdate(story.id, peopleArray);
                                     setShowPeopleInput(false);
                                 }}
                             >
@@ -295,7 +295,7 @@ function StoryCard({ story, index, onTitleUpdate, handleDelete, onDateUpdate, on
                             <button
                                 className="!bg-blue-600 text-white px-2 py-1 rounded hover:!bg-blue-700"
                                 onClick={() => {
-                                    onLocationUpdate(index, locationInputValue);
+                                    onLocationUpdate(story.id, locationInputValue);
                                     setShowLocationInput(false);
                                 }}
                             >

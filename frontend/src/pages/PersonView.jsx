@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchStories, fetchPeople, postPerson } from '../api';
+import { fetchStories, fetchPeople, postPerson, addPerson, getPerson, updatePersonPicture, updatePersonBirthDate, updatePersonDeathDate, updatePersonGender, uploadPersonPicture } from '../api';
+import { useAuth } from '../contexts/AuthContext';
 import PersonCard from '../PersonCard';
 
 export default function PersonView() {
@@ -9,11 +10,19 @@ export default function PersonView() {
   const [people, setPeople] = useState([]);
   const [newPersonName, setNewPersonName] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [newPerson, setNewPerson] = useState('');
+  const [newGender, setNewGender] = useState('');
+  const [newBirthDate, setNewBirthDate] = useState('');
+  const [newDeathDate, setNewDeathDate] = useState('');
+  const [newPicture, setNewPicture] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchStories().then(setStories);
-    fetchPeople().then(setPeople);
-  }, []);
+    if (user) {
+      fetchStories().then(setStories);
+      fetchPeople().then(setPeople);
+    }
+  }, [user]);
 
   // Group stories by people
   useEffect(() => {
@@ -41,19 +50,47 @@ export default function PersonView() {
 
   const handleAddPerson = async (e) => {
     e.preventDefault();
-    if (!newPersonName.trim()) return;
+    if (!newPersonName.trim() || !user) return;
 
     try {
-      await postPerson({ name: newPersonName.trim() });
+      const result = await addPerson({
+        name: newPersonName.trim(),
+        gender: newGender || null,
+        birth_date: newBirthDate || null,
+        death_date: newDeathDate || null,
+        picture: null
+      });
+
+      if (newPicture) {
+        try {
+          const uploadRes = await uploadPersonPicture(result.name, newPicture);
+          if (uploadRes && uploadRes.url) {
+            result.picture = uploadRes.url;
+          }
+        } catch (err) {
+          console.error('Picture upload failed:', err);
+        }
+      }
+
+      setPeople([...people, result]);
       setNewPersonName('');
-      setShowAddForm(false);
-      // Refresh people list
-      fetchPeople().then(setPeople);
+      setNewGender('');
+      setNewBirthDate('');
+      setNewDeathDate('');
+      setNewPicture(null);
     } catch (error) {
-      console.error('Failed to add person:', error);
-      alert('Failed to add person. Please try again.');
+      console.error('Error adding person:', error);
     }
   };
+
+  if (!user) {
+    return (
+      <div className="p-4 max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold text-blue-600 mb-6">People</h1>
+        <p className="text-gray-600">Please log in to view and manage people.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-12">
@@ -79,20 +116,51 @@ export default function PersonView() {
         
         {showAddForm && (
           <form onSubmit={handleAddPerson} className="mt-4 bg-white p-4 rounded-lg shadow">
-            <input
-              type="text"
-              value={newPersonName}
-              onChange={(e) => setNewPersonName(e.target.value)}
-              placeholder="Enter person's name"
-              className="w-full border rounded p-2 mb-3"
-              required
-            />
-            <button
-              type="submit"
-              className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
-            >
-              Add Person
-            </button>
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={newPersonName}
+                onChange={(e) => setNewPersonName(e.target.value)}
+                placeholder="Person's name"
+                className="w-full border rounded p-2 mb-3"
+                required
+              />
+              <select
+                className="w-full border rounded p-2 mb-3"
+                value={newGender}
+                onChange={(e) => setNewGender(e.target.value)}
+              >
+                <option value="">Select gender</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+              <input
+                type="date"
+                value={newBirthDate}
+                onChange={(e) => setNewBirthDate(e.target.value)}
+                placeholder="Birth date"
+                className="w-full border rounded p-2 mb-3"
+              />
+              <input
+                type="date"
+                value={newDeathDate}
+                onChange={(e) => setNewDeathDate(e.target.value)}
+                placeholder="Death date"
+                className="w-full border rounded p-2 mb-3"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full border rounded p-2 mb-3"
+                onChange={(e) => setNewPicture(e.target.files[0])}
+              />
+              <button
+                type="submit"
+                className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Add Person
+              </button>
+            </div>
           </form>
         )}
       </div>

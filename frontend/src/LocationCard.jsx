@@ -39,8 +39,8 @@ function LocationCard({ location, stories }) {
       {isExpanded && (
         <div className="border-t border-gray-200 p-6 bg-gray-50">
           <div className="space-y-4">
-            {stories.map((story, index) => (
-              <div key={index} className="bg-white rounded border p-4">
+            {stories.map((story) => (
+              <div key={story.id} className="bg-white rounded border p-4">
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {story.title}
                 </h3>
@@ -55,7 +55,7 @@ function LocationCard({ location, stories }) {
                 {story.people && story.people.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1 items-center">
                     {story.people.map((person, idx) => (
-                      <div key={idx} className="flex items-center gap-1">
+                      <div key={`${story.id}-person-${idx}`} className="flex items-center gap-1">
                         <PersonAvatar personName={person} size="small" />
                         <span 
                           className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
