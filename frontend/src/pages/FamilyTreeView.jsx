@@ -81,8 +81,8 @@ export default function FamilyTreeView() {
 
     try {
       await addRelationship({
-        parent_name: newRelationship.parent,
-        child_name: newRelationship.child,
+        parent_id: newRelationship.parent,
+        child_id: newRelationship.child,
         relationship_type: "parent-child"
       });
       setNewRelationship({ parent: '', child: '' });
@@ -99,8 +99,8 @@ export default function FamilyTreeView() {
     if (!newFriendship.person1 || !newFriendship.person2 || newFriendship.person1 === newFriendship.person2 || !user) return;
     try {
       await addFriendship({
-        person1: newFriendship.person1,
-        person2: newFriendship.person2
+        person1_id: newFriendship.person1,
+        person2_id: newFriendship.person2
       });
       setNewFriendship({ person1: '', person2: '' });
       setShowAddFriendship(false);
@@ -111,16 +111,16 @@ export default function FamilyTreeView() {
     }
   };
 
-  const handleEditPerson = async (personName) => {
+  const handleEditPerson = async (personId) => {
     try {
       if (editForm.gender !== undefined) {
-        await updatePersonGender(personName, editForm.gender);
+        await updatePersonGender(personId, editForm.gender);
       }
       if (editForm.birthDate !== undefined) {
-        await updatePersonBirthDate(personName, editForm.birthDate);
+        await updatePersonBirthDate(personId, editForm.birthDate);
       }
       if (editForm.deathDate !== undefined) {
-        await updatePersonDeathDate(personName, editForm.deathDate);
+        await updatePersonDeathDate(personId, editForm.deathDate);
       }
       setEditingPerson(null);
       setEditForm({});
@@ -130,10 +130,10 @@ export default function FamilyTreeView() {
     }
   };
 
-  const handleDeleteRelationship = async (parent, child) => {
-    if (!window.confirm(`Delete relationship between ${parent} and ${child}?`)) return;
+  const handleDeleteRelationship = async (parentId, childId) => {
+    if (!window.confirm(`Delete relationship between ${parentId} and ${childId}?`)) return;
     try {
-      await deleteRelationship(parent, child);
+      await deleteRelationship(parentId, childId);
       loadRelationships();
       loadFamilyTree();
     } catch (error) {
@@ -141,10 +141,10 @@ export default function FamilyTreeView() {
     }
   };
 
-  const handleDeleteFriendship = async (person1, person2) => {
-    if (!window.confirm(`Delete friendship between ${person1} and ${person2}?`)) return;
+  const handleDeleteFriendship = async (person1Id, person2Id) => {
+    if (!window.confirm(`Delete friendship between ${person1Id} and ${person2Id}?`)) return;
     try {
-      await deleteFriendship(person1, person2);
+      await deleteFriendship(person1Id, person2Id);
       loadFriendships();
       loadFamilyTree();
     } catch (error) {
@@ -157,18 +157,18 @@ export default function FamilyTreeView() {
     return familyData.filter(person => person.parents.length === 0);
   };
 
-  const getChildren = (personName) => {
+  const getChildren = (personId) => {
     return familyData.filter(person => 
-      person.parents.some(parent => parent === personName)
+      person.parents.some(parentId => parentId === personId)
     );
   };
 
   const renderPersonNode = (person, level = 0) => {
-    const children = getChildren(person.name);
-    const isEditing = editingPerson === person.name;
+    const children = getChildren(person.id);
+    const isEditing = editingPerson === person.id;
 
     return (
-      <div key={person.name} className="flex flex-col items-center">
+      <div key={person.id} className="flex flex-col items-center">
         <div className={`relative ${level > 0 ? 'mt-8' : ''}`}>
           {/* Connection line from parent */}
           {level > 0 && (
@@ -189,7 +189,7 @@ export default function FamilyTreeView() {
                 )}
               </div>
               <button
-                onClick={() => setEditingPerson(person.name)}
+                onClick={() => setEditingPerson(person.id)}
                 className="text-blue-600 hover:text-blue-800 text-sm"
               >
                 ✏️
@@ -241,7 +241,7 @@ export default function FamilyTreeView() {
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleEditPerson(person.name)}
+                    onClick={() => handleEditPerson(person.id)}
                     className="bg-blue-600 text-white px-2 py-1 rounded text-sm hover:bg-blue-700"
                   >
                     Save
@@ -398,7 +398,7 @@ export default function FamilyTreeView() {
                 >
                   <option value="">Select parent...</option>
                   {familyData.map(person => (
-                    <option key={person.name} value={person.name}>{person.name}</option>
+                    <option key={person.id} value={person.id}>{person.name}</option>
                   ))}
                 </select>
               </div>
@@ -412,7 +412,7 @@ export default function FamilyTreeView() {
                 >
                   <option value="">Select child...</option>
                   {familyData.map(person => (
-                    <option key={person.name} value={person.name}>{person.name}</option>
+                    <option key={person.id} value={person.id}>{person.name}</option>
                   ))}
                 </select>
               </div>
@@ -443,7 +443,7 @@ export default function FamilyTreeView() {
                 >
                   <option value="">Select person...</option>
                   {familyData.map(person => (
-                    <option key={person.name} value={person.name}>{person.name}</option>
+                    <option key={person.id} value={person.id}>{person.name}</option>
                   ))}
                 </select>
               </div>
@@ -457,7 +457,7 @@ export default function FamilyTreeView() {
                 >
                   <option value="">Select person...</option>
                   {familyData.map(person => (
-                    <option key={person.name} value={person.name}>{person.name}</option>
+                    <option key={person.id} value={person.id}>{person.name}</option>
                   ))}
                 </select>
               </div>
@@ -483,7 +483,7 @@ export default function FamilyTreeView() {
               <li key={idx} className="flex items-center justify-between py-2">
                 <span>{rel.parent_name} ➔ {rel.child_name} <span className="text-xs text-gray-400">({rel.relationship_type})</span></span>
                 <button
-                  onClick={() => handleDeleteRelationship(rel.parent_name, rel.child_name)}
+                  onClick={() => handleDeleteRelationship(rel.parent_id, rel.child_id)}
                   className="text-red-600 hover:underline text-sm ml-2"
                 >
                   Delete
@@ -504,7 +504,7 @@ export default function FamilyTreeView() {
               <li key={idx} className="flex items-center justify-between py-2">
                 <span>{f.person1} 🤝 {f.person2}</span>
                 <button
-                  onClick={() => handleDeleteFriendship(f.person1, f.person2)}
+                  onClick={() => handleDeleteFriendship(f.person1_id, f.person2_id)}
                   className="text-red-600 hover:underline text-sm ml-2"
                 >
                   Delete

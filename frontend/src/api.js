@@ -50,10 +50,10 @@ export const fetchPeople = async () => {
   }
 };
 
-export const getPerson = async (personName) => {
+export const getPerson = async (personId) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.get(`${API_URL}/people/${personName}${userId ? `?user_id=${userId}` : ''}`);
+    const response = await axios.get(`${API_URL}/people/${personId}${userId ? `?user_id=${userId}` : ''}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching person:', error);
@@ -61,10 +61,10 @@ export const getPerson = async (personName) => {
   }
 };
 
-export const updatePersonPicture = async (personName, picture) => {
+export const updatePersonPicture = async (personId, picture) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.patch(`${API_URL}/people/${personName}/picture${userId ? `?user_id=${userId}` : ''}`, { picture });
+    const response = await axios.patch(`${API_URL}/people/${personId}/picture${userId ? `?user_id=${userId}` : ''}`, { picture });
     return response.data;
   } catch (error) {
     console.error('Error updating person picture:', error);
@@ -72,13 +72,13 @@ export const updatePersonPicture = async (personName, picture) => {
   }
 };
 
-export const uploadPersonPicture = async (personName, file) => {
+export const uploadPersonPicture = async (personId, file) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
     
     const userId = await getCurrentUserId();
-    const response = await axios.post(`${API_URL}/people/${personName}/upload-picture${userId ? `?user_id=${userId}` : ''}`, formData, {
+    const response = await axios.post(`${API_URL}/people/${personId}/upload-picture${userId ? `?user_id=${userId}` : ''}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -123,10 +123,10 @@ export const patchStoryDate = async (storyId, date) => {
   }
 };
 
-export const patchStoryPeople = async (storyId, people) => {
+export const patchStoryPeople = async (storyId, people_ids) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.patch(`${API_URL}/stories/${storyId}/people${userId ? `?user_id=${userId}` : ''}`, { people });
+    const response = await axios.patch(`${API_URL}/stories/${storyId}/people${userId ? `?user_id=${userId}` : ''}`, { people_ids });
     return response.data;
   } catch (error) {
     console.error('Error updating story people:', error);
@@ -134,10 +134,13 @@ export const patchStoryPeople = async (storyId, people) => {
   }
 };
 
-export const patchStoryLocation = async (storyId, location) => {
+export const patchStoryLocation = async (storyId, { location_id, location_name }) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.patch(`${API_URL}/stories/${storyId}/location${userId ? `?user_id=${userId}` : ''}`, { location });
+    const payload = {};
+    if (location_id) payload.location_id = location_id;
+    if (location_name) payload.location_name = location_name;
+    const response = await axios.patch(`${API_URL}/stories/${storyId}/location${userId ? `?user_id=${userId}` : ''}`, payload);
     return response.data;
   } catch (error) {
     console.error('Error updating story location:', error);
@@ -178,10 +181,10 @@ export const addPerson = async (personData) => {
   }
 };
 
-export const updatePersonBirthDate = async (personName, birthDate) => {
+export const updatePersonBirthDate = async (personId, birthDate) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.patch(`${API_URL}/people/${personName}/birth-date${userId ? `?user_id=${userId}` : ''}`, { birth_date: birthDate });
+    const response = await axios.patch(`${API_URL}/people/${personId}/birth-date${userId ? `?user_id=${userId}` : ''}`, { birth_date: birthDate });
     return response.data;
   } catch (error) {
     console.error('Error updating person birth date:', error);
@@ -189,10 +192,10 @@ export const updatePersonBirthDate = async (personName, birthDate) => {
   }
 };
 
-export const updatePersonDeathDate = async (personName, deathDate) => {
+export const updatePersonDeathDate = async (personId, deathDate) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.patch(`${API_URL}/people/${personName}/death-date${userId ? `?user_id=${userId}` : ''}`, { death_date: deathDate });
+    const response = await axios.patch(`${API_URL}/people/${personId}/death-date${userId ? `?user_id=${userId}` : ''}`, { death_date: deathDate });
     return response.data;
   } catch (error) {
     console.error('Error updating person death date:', error);
@@ -200,10 +203,10 @@ export const updatePersonDeathDate = async (personName, deathDate) => {
   }
 };
 
-export const updatePersonGender = async (personName, gender) => {
+export const updatePersonGender = async (personId, gender) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.patch(`${API_URL}/people/${personName}/gender${userId ? `?user_id=${userId}` : ''}`, { gender });
+    const response = await axios.patch(`${API_URL}/people/${personId}/gender${userId ? `?user_id=${userId}` : ''}`, { gender });
     return response.data;
   } catch (error) {
     console.error('Error updating person gender:', error);
@@ -236,10 +239,10 @@ export const addRelationship = async (relationshipData) => {
   }
 };
 
-export const deleteRelationship = async (person1, person2) => {
+export const deleteRelationship = async (parentId, childId) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.delete(`${API_URL}/relationships?person1=${person1}&person2=${person2}${userId ? `&user_id=${userId}` : ''}`);
+    const response = await axios.delete(`${API_URL}/relationships?person1_id=${parentId}&person2_id=${childId}${userId ? `&user_id=${userId}` : ''}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting relationship:', error);
@@ -272,10 +275,10 @@ export const addFriendship = async (friendshipData) => {
   }
 };
 
-export const deleteFriendship = async (person1, person2) => {
+export const deleteFriendship = async (person1Id, person2Id) => {
   try {
     const userId = await getCurrentUserId();
-    const response = await axios.delete(`${API_URL}/friendships?person1=${person1}&person2=${person2}${userId ? `&user_id=${userId}` : ''}`);
+    const response = await axios.delete(`${API_URL}/friendships?person1_id=${person1Id}&person2_id=${person2Id}${userId ? `&user_id=${userId}` : ''}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting friendship:', error);
@@ -290,6 +293,37 @@ export const fetchFamilyTree = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching family tree:', error);
+    throw error;
+  }
+};
+
+export const fetchLocations = async () => {
+  try {
+    const userId = await getCurrentUserId();
+    const response = await axios.get(`${API_URL}/locations${userId ? `?user_id=${userId}` : ''}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    throw error;
+  }
+};
+
+export const addLocation = async (locationData) => {
+  try {
+    const response = await axios.post(`${API_URL}/locations`, locationData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding location:', error);
+    throw error;
+  }
+};
+
+export const getLocation = async (locationId) => {
+  try {
+    const response = await axios.get(`${API_URL}/locations/${locationId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching location:', error);
     throw error;
   }
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchStories, postStory, deleteStory, patchStoryTitle, patchStoryDate, patchStoryPeople, patchStoryLocation, uploadStoryPhotos } from '../api';
+import { fetchStories, postStory, deleteStory, patchStoryTitle, patchStoryDate, patchStoryPeople, patchStoryLocation, uploadStoryPhotos, fetchPeople } from '../api';
 import { Link } from "react-router-dom";
 import StoryCard from '../StoryCard';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,10 +16,12 @@ export default function Default() {
     const [storyToDelete, setStoryToDelete] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const { user } = useAuth();
+    const [people, setPeople] = useState([]);
   
     useEffect(() => {
       if (user) {
         fetchStories().then(setStories);
+        fetchPeople().then(setPeople);
       }
     }, [user]);
   
@@ -28,13 +30,14 @@ export default function Default() {
       if (!newStory.trim() || !user) return;
       
       // Parse people from comma-separated input
-      const people = newPeople.trim() 
-        ? newPeople.split(',').map(p => p.trim()).filter(p => p.length > 0)
+      const peopleNameToId = Object.fromEntries(people.map(p => [p.name, p.id]));
+      const peopleIds = newPeople.trim()
+        ? newPeople.split(',').map(p => p.trim()).filter(p => p.length > 0).map(name => peopleNameToId[name]).filter(Boolean)
         : [];
       
       const result = await postStory({ 
         content: newStory, 
-        people: people,
+        people: peopleIds,
         location: newLocation.trim(),
         photos: []
       });

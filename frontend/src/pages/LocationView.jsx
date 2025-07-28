@@ -16,8 +16,8 @@ export default function LocationView() {
     const grouped = {};
     
     stories.forEach(story => {
-      if (story.location && story.location.trim()) {
-        const location = story.location.trim();
+      if (story.location_name && story.location_name.trim()) {
+        const location = story.location_name.trim();
         if (!grouped[location]) {
           grouped[location] = [];
         }

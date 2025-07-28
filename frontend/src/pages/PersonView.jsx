@@ -17,24 +17,29 @@ export default function PersonView() {
   const [newPicture, setNewPicture] = useState(null);
   const { user } = useAuth();
 
+  // When fetching people, store by id
   useEffect(() => {
     if (user) {
       fetchStories().then(setStories);
-      fetchPeople().then(setPeople);
+      fetchPeople().then(peopleList => {
+        setPeople(peopleList);
+        // Optionally, build a map by id for quick lookup
+        // setPeopleMap(Object.fromEntries(peopleList.map(p => [p.id, p])));
+      });
     }
   }, [user]);
 
-  // Group stories by people
+  // When grouping stories by people, use person id
   useEffect(() => {
     const grouped = {};
     
     stories.forEach(story => {
       if (story.people && story.people.length > 0) {
-        story.people.forEach(person => {
-          if (!grouped[person]) {
-            grouped[person] = [];
+        story.people.forEach(personId => {
+          if (!grouped[personId]) {
+            grouped[personId] = [];
           }
-          grouped[person].push(story);
+          grouped[personId].push(story);
         });
       } else {
         // Stories without people go to "Uncategorized"
@@ -63,7 +68,7 @@ export default function PersonView() {
 
       if (newPicture) {
         try {
-          const uploadRes = await uploadPersonPicture(result.name, newPicture);
+          const uploadRes = await uploadPersonPicture(result.id, newPicture);
           if (uploadRes && uploadRes.url) {
             result.picture = uploadRes.url;
           }
@@ -174,7 +179,7 @@ export default function PersonView() {
           {Object.entries(peopleMap).map(([person, personStories]) => (
             <PersonCard
               key={person}
-              person={person}
+              person={person === "Uncategorized" ? person : Number(person)}
               stories={personStories}
             />
           ))}

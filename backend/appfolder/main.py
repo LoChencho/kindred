@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from appfolder.routes import stories  # <-- import the router
+from appfolder.routes import stories, people, relationships, friendships  # <-- import the router
 
 app = FastAPI()
 
@@ -18,6 +18,9 @@ app.add_middleware(
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(stories.router)
+app.include_router(people.router)
+app.include_router(relationships.router)
+app.include_router(friendships.router)
 
 @app.get("/")
 def read_root():

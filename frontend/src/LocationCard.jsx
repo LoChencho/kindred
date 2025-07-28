@@ -1,8 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PersonAvatar from './PersonAvatar';
+import { getPerson } from './api';
 
 function LocationCard({ location, stories }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [peopleNames, setPeopleNames] = useState({});
+
+  useEffect(() => {
+    // Collect all unique person IDs from all stories
+    const allIds = Array.from(
+      new Set(
+        stories.flatMap(story => (story.people && Array.isArray(story.people) ? story.people : []))
+      )
+    );
+    Promise.all(
+      allIds.map(pid =>
+        getPerson(pid).then(p => [pid, p.name]).catch(() => [pid, "Unknown"])
+      )
+    ).then(entries => setPeopleNames(Object.fromEntries(entries)));
+  }, [stories]);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -56,11 +72,11 @@ function LocationCard({ location, stories }) {
                   <div className="mt-2 flex flex-wrap gap-1 items-center">
                     {story.people.map((person, idx) => (
                       <div key={`${story.id}-person-${idx}`} className="flex items-center gap-1">
-                        <PersonAvatar personName={person} size="small" />
+                        <PersonAvatar person={person} size="small" />
                         <span 
                           className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
                         >
-                          {person}
+                          {peopleNames[person] || person}
                         </span>
                       </div>
                     ))}

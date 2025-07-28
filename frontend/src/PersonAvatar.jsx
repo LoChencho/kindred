@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { getPerson } from './api';
 
-function PersonAvatar({ personName, size = "small" }) {
+function PersonAvatar({ person, size = "small" }) {
   const [personData, setPersonData] = useState(null);
 
   useEffect(() => {
-    if (personName) {
-      getPerson(personName).then(setPersonData).catch(() => {
-        setPersonData({ name: personName, picture: null });
+    if (person && person !== "Uncategorized") {
+      getPerson(person).then(setPersonData).catch(() => {
+        setPersonData({ id: person, picture: null, name: "Unknown" });
       });
     }
-  }, [personName]);
+  }, [person]);
 
   const sizeClasses = {
     small: "w-6 h-6",
@@ -24,7 +24,7 @@ function PersonAvatar({ personName, size = "small" }) {
     large: "text-lg"
   };
 
-  if (!personData) {
+  if (!personData && person !== "Uncategorized") {
     return (
       <div className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center`}>
         <span className={`${textSizes[size]} text-gray-500`}>👤</span>
@@ -34,10 +34,10 @@ function PersonAvatar({ personName, size = "small" }) {
 
   return (
     <div className="inline-flex items-center">
-      {personData.picture ? (
+      {personData && personData.picture ? (
         <img 
           src={`http://localhost:8000${personData.picture}`}
-          alt={personName}
+          alt={personData ? personData.name : person}
           className={`${sizeClasses[size]} rounded-full object-cover border border-gray-200`}
         />
       ) : (

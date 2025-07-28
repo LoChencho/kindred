@@ -9,9 +9,9 @@ function PersonCard({ person, stories }) {
 
   useEffect(() => {
     if (person !== "Uncategorized") {
+      console.log("Getting person data for", person);
       getPerson(person).then(setPersonData).catch(() => {
-        // If person doesn't exist in the people list, create a default object
-        setPersonData({ name: person, picture: null });
+        setPersonData({ id: person, picture: null, name: "Unknown" });
       });
     }
   }, [person]);
@@ -49,7 +49,7 @@ function PersonCard({ person, stories }) {
                 {personData.picture ? (
                   <img 
                     src={`http://localhost:8000${personData.picture}`}
-                    alt={person}
+                    alt={personData.name || person}
                     className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                   />
                 ) : (
@@ -58,74 +58,43 @@ function PersonCard({ person, stories }) {
                   </div>
                 )}
                 {person !== "Uncategorized" && (
-                  <label className="absolute -bottom-1 -right-1 bg-blue-500 text-white rounded-full p-1 cursor-pointer hover:bg-blue-600 transition-colors">
+                  <label className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow cursor-pointer">
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={handleFileUpload}
                       className="hidden"
+                      onChange={handleFileUpload}
                       disabled={isUploading}
                     />
-                    {isUploading ? (
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    )}
+                    <span role="img" aria-label="Upload" className="text-xs">📷</span>
                   </label>
                 )}
               </div>
             )}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">
-                {person === "Uncategorized" ? "📁 Uncategorized Stories" : `👤 ${person}`}
-              </h2>
-              <p className="text-gray-600 mt-1">
-                {stories.length} {stories.length === 1 ? 'story' : 'stories'}
-              </p>
-            </div>
+            {/* Display the person's name */}
+            <span className="font-bold text-lg">
+              {person === "Uncategorized"
+                ? "Uncategorized"
+                : (personData?.name || "Unknown")}
+            </span>
           </div>
-          <div className="text-gray-400">
-            <svg 
-              className={`w-6 h-6 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
+          <button
+            className="ml-4 text-blue-600 hover:underline"
+            onClick={toggleExpand}
+          >
+            {isExpanded ? "Hide Stories" : "Show Stories"}
+          </button>
         </div>
       </div>
-      
       {isExpanded && (
-        <div className="border-t border-gray-200 p-6 bg-gray-50">
-          <div className="space-y-4">
-            {stories.map((story) => (
-              <div key={story.id} className="bg-white rounded border p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  {story.title}
-                </h3>
-                <p className="text-gray-700 mb-2">
-                  {story.content}
-                </p>
-                {story.date && (
-                  <p className="text-sm text-gray-500">
-                    📅 {new Date(story.date).toLocaleDateString()}
-                  </p>
-                )}
-                {story.location && (
-                  <p className="text-sm text-gray-500">
-                    📍 {story.location}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
+        <div className="p-4 border-t">
+          {stories && stories.length > 0 ? (
+            stories.map(story => (
+              <StoryCard key={story.id} story={story} />
+            ))
+          ) : (
+            <div className="text-gray-500">No stories for this person.</div>
+          )}
         </div>
       )}
     </div>

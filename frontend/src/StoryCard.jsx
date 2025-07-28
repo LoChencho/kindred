@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { patchStoryTitle, uploadStoryPhotos } from './api';
+import { patchStoryTitle, uploadStoryPhotos, getPerson, fetchLocations, patchStoryLocation } from './api';
 import PersonAvatar from './PersonAvatar';
 
 const API_URL = 'http://localhost:8000'; // adjust if needed
@@ -16,7 +16,9 @@ function StoryCard({ story, onTitleUpdate, handleDelete, onDateUpdate, onPeopleU
         return story.people.join(', ');
     });
     const [showLocationInput, setShowLocationInput] = useState(false);
-    const [locationInputValue, setLocationInputValue] = useState(story.location || '');
+    const [locationInputValue, setLocationInputValue] = useState(story.location_name || '');
+    const [locationOptions, setLocationOptions] = useState([]);
+    const [locationIdValue, setLocationIdValue] = useState(story.location_id || null);
     const [showDateInput, setShowDateInput] = useState(false);
     const [dateInputValue, setDateInputValue] = useState(() => {
         if (!story.date) return '';
@@ -40,6 +42,27 @@ function StoryCard({ story, onTitleUpdate, handleDelete, onDateUpdate, onPeopleU
         return () => window.removeEventListener('click', handleClickOutside);
       }, []);
 
+    useEffect(() => {
+        // Fetch names for all person IDs in this story
+        if (story.people && Array.isArray(story.people)) {
+          Promise.all(
+            story.people.map(pid =>
+              getPerson(pid).then(p => [pid, p.name]).catch(() => [pid, "Unknown"])
+            )
+          ).then(entries => {
+            const peopleNames = Object.fromEntries(entries);
+            // Update story.people_names if it's not already set
+            if (!story.people_names) {
+              story.people_names = story.people.map(pid => peopleNames[pid] || pid);
+            }
+          });
+        }
+      }, [story.people]);
+
+    useEffect(() => {
+        fetchLocations().then(setLocationOptions);
+    }, []);
+
     const handleSave = async () => {
         console.log("Saving new title:", editedTitle);
 
@@ -58,8 +81,7 @@ function StoryCard({ story, onTitleUpdate, handleDelete, onDateUpdate, onPeopleU
 
     const handleMenuClick = (e) => {
         e.stopPropagation();
-        const rect = e.currentTarget.getBoundingClientRect();
-        setMenuPosition({ x: rect.left, y: rect.bottom + window.scrollY });
+        setMenuPosition({ x: e.clientX, y: e.clientY });
         setMenuVisible(!menuVisible);
     };
 
@@ -142,24 +164,25 @@ function StoryCard({ story, onTitleUpdate, handleDelete, onDateUpdate, onPeopleU
                     <p className="mt-2 text-gray-800">
                         {story.content}
                     </p>
-                    {story.people && story.people.length > 0 && (
+                    {story.people_names && story.people_names.length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2 items-center">
                             <span className="text-sm text-gray-600">People:</span>
-                            {story.people.map((person, idx) => (
+                            {story.people_names.map((name, idx) => (
                                 <div key={`${story.id}-person-${idx}`} className="flex items-center gap-1">
-                                    <PersonAvatar personName={person} size="small" />
+                                    {/* Use people_ids[idx] for PersonAvatar, not name */}
+                                    <PersonAvatar person={story.people_ids && story.people_ids[idx]} size="small" />
                                     <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                                        {person}
+                                        {name}
                                     </span>
                                 </div>
                             ))}
                         </div>
                     )}
-                    {story.location && (
+                    {story.location_name && (
                         <div className="mt-3 flex flex-wrap gap-2">
                             <span className="text-sm text-gray-600">Location:</span>
                             <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                                📍 {story.location}
+                                📍 {story.location_name}
                             </span>
                         </div>
                     )}
@@ -286,16 +309,39 @@ function StoryCard({ story, onTitleUpdate, handleDelete, onDateUpdate, onPeopleU
                     )}
                     {showLocationInput && (
                         <div className="absolute z-50 bg-white border rounded shadow-md p-4 mt-2 flex items-center gap-2" style={{ left: menuPosition.x, top: menuPosition.y }} onClick={e => e.stopPropagation()}>
+                            <select
+                                value={locationIdValue || ''}
+                                onChange={e => {
+                                    const selectedId = e.target.value ? parseInt(e.target.value) : null;
+                                    setLocationIdValue(selectedId);
+                                    const selected = locationOptions.find(l => l.id === selectedId);
+                                    setLocationInputValue(selected ? selected.name : '');
+                                }}
+                                className="border rounded p-1"
+                            >
+                                <option value="">-- Select Location --</option>
+                                {locationOptions.map(loc => (
+                                    <option key={loc.id} value={loc.id}>{loc.name}</option>
+                                ))}
+                            </select>
                             <input
                                 type="text"
                                 value={locationInputValue}
-                                onChange={e => setLocationInputValue(e.target.value)}
+                                onChange={e => {
+                                    setLocationInputValue(e.target.value);
+                                    setLocationIdValue(null); // Custom name, not from list
+                                }}
                                 className="border rounded p-1"
+                                placeholder="Or enter new location"
                             />
                             <button
                                 className="!bg-blue-600 text-white px-2 py-1 rounded hover:!bg-blue-700"
-                                onClick={() => {
-                                    onLocationUpdate(story.id, locationInputValue);
+                                onClick={async () => {
+                                    await patchStoryLocation(story.id, {
+                                        location_id: locationIdValue,
+                                        location_name: locationIdValue ? undefined : locationInputValue
+                                    });
+                                    onLocationUpdate && onLocationUpdate(story.id, locationInputValue);
                                     setShowLocationInput(false);
                                 }}
                             >
