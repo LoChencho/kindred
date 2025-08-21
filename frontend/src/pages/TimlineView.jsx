@@ -88,18 +88,18 @@ export default function TimelineView() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-6 py-12 transition-colors duration-300">
       <div className="mb-6">
-        <Link to="/" className="text-blue-600 hover:underline">&larr; Back to List</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/people" className="text-blue-600 hover:underline">View by People</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/location" className="text-blue-600 hover:underline">View by Location</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/family-tree" className="text-blue-600 hover:underline">Family Tree</Link>
+        <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">&larr; Back to List</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/people" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View by People</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/location" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View by Location</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/family-tree" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">Family Tree</Link>
       </div>
-      <h1 className="text-3xl font-bold mb-12 text-center">📜 Story Timeline</h1>
-      <div className="relative border-l-4 !border-blue-500 pl-6 space-y-12">
+      <h1 className="text-3xl font-bold mb-12 text-center text-gray-900 dark:text-gray-100">📜 Story Timeline</h1>
+      <div className="relative border-l-4 border-blue-500 dark:border-blue-400 pl-6 space-y-12">
         {sortedStories.map((story) => (
           <StoryCard
             key={story.id}
@@ -113,12 +113,12 @@ export default function TimelineView() {
         ))}
       </div>
       {showDeleteConfirm && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
-                    <div className="bg-white p-6 rounded shadow-lg text-center">
-                        <h2 className="text-lg font-semibold mb-4">Are you sure you want to delete the story: <span className='font-bold'>&quot;{stories.find(s => s.id === storyToDelete)?.title}&quot;</span>?</h2>
+                <div className="fixed inset-0 flex items-center justify-center bg-black/60 dark:bg-black/80 z-50">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-lg text-center max-w-md mx-4">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Are you sure you want to delete the story: <span className='font-bold'>&quot;{stories.find(s => s.id === storyToDelete)?.title}&quot;</span>?</h2>
                         <div className="flex justify-center gap-4">
                             <button
-                                className="!bg-red-600 text-white px-4 py-2 rounded hover:!bg-red-700"
+                                className="bg-red-600 dark:bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 dark:hover:bg-red-600 transition-colors duration-200"
                                 onClick={async () => {
                                     await handleDeleteStory(storyToDelete);
                                     setShowDeleteConfirm(false);
@@ -128,7 +128,7 @@ export default function TimelineView() {
                                 Yes, Delete
                             </button>
                             <button
-                                className="!bg-gray-300 px-4 py-2 rounded hover:!bg-gray-400"
+                                className="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors duration-200"
                                 onClick={() => {
                                     setShowDeleteConfirm(false);
                                     setStoryToDelete(null);

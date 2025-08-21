@@ -37,9 +37,9 @@ function PersonCard({ person, stories }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-200">
       <div 
-        className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
         onClick={toggleExpand}
       >
         <div className="flex items-center justify-between">
@@ -50,15 +50,15 @@ function PersonCard({ person, stories }) {
                   <img 
                     src={`http://localhost:8000${personData.picture}`}
                     alt={personData.name || person}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                  <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center border-2 border-gray-300 dark:border-gray-500">
                     <span className="text-2xl">👤</span>
                   </div>
                 )}
                 {person !== "Uncategorized" && (
-                  <label className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow cursor-pointer">
+                  <label className="absolute bottom-0 right-0 bg-white dark:bg-gray-700 rounded-full p-1 shadow cursor-pointer border border-gray-200 dark:border-gray-600 hover:shadow-lg transition-shadow duration-200">
                     <input
                       type="file"
                       accept="image/*"
@@ -72,14 +72,14 @@ function PersonCard({ person, stories }) {
               </div>
             )}
             {/* Display the person's name */}
-            <span className="font-bold text-lg">
+            <span className="font-bold text-lg text-gray-900 dark:text-gray-100">
               {person === "Uncategorized"
                 ? "Uncategorized"
                 : (personData?.name || "Unknown")}
             </span>
           </div>
           <button
-            className="ml-4 text-blue-600 hover:underline"
+            className="ml-4 text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200"
             onClick={toggleExpand}
           >
             {isExpanded ? "Hide Stories" : "Show Stories"}
@@ -87,13 +87,13 @@ function PersonCard({ person, stories }) {
         </div>
       </div>
       {isExpanded && (
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
           {stories && stories.length > 0 ? (
             stories.map(story => (
               <StoryCard key={story.id} story={story} />
             ))
           ) : (
-            <div className="text-gray-500">No stories for this person.</div>
+            <div className="text-gray-500 dark:text-gray-400">No stories for this person.</div>
           )}
         </div>
       )}

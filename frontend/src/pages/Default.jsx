@@ -37,8 +37,8 @@ export default function Default() {
       
       const result = await postStory({ 
         content: newStory, 
-        people: peopleIds,
-        location: newLocation.trim(),
+        people_ids: peopleIds,
+        location_name: newLocation.trim(),
         photos: []
       });
       let storyWithPhotos = result;
@@ -126,19 +126,19 @@ export default function Default() {
     if (!user) {
       return (
         <div className="p-4 max-w-xl mx-auto">
-          <h1 className="text-2xl font-bold text-blue-600 mb-6">Family Stories</h1>
-          <p className="text-gray-600">Please log in to view and create stories.</p>
+          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6">Family Stories</h1>
+          <p className="text-gray-600 dark:text-gray-300">Please log in to view and create stories.</p>
         </div>
       );
     }
 
     return (
         <div className="p-4 max-w-xl mx-auto">
-            <h1 className="text-2xl font-bold text-blue-600 mb-6">Family Stories</h1>
+            <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6">Family Stories</h1>
 
             <form onSubmit={handleSubmit} className="mb-4">
                 <textarea
-                    className="w-full border rounded p-2 mb-3"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 mb-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
                     rows={4}
                     value={newStory}
                     onChange={(e) => setNewStory(e.target.value)}
@@ -146,14 +146,14 @@ export default function Default() {
                 />
                 <input
                     type="text"
-                    className="w-full border rounded p-2 mb-3"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 mb-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
                     value={newPeople}
                     onChange={(e) => setNewPeople(e.target.value)}
                     placeholder="People in this story (comma-separated, e.g., John, Mary, Dad)"
                 />
                 <input
                     type="text"
-                    className="w-full border rounded p-2 mb-3"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 mb-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
                     value={newLocation}
                     onChange={(e) => setNewLocation(e.target.value)}
                     placeholder="Location (e.g., New York, Grandma's House, Beach)"
@@ -162,10 +162,10 @@ export default function Default() {
                     type="file"
                     accept="image/*"
                     multiple
-                    className="w-full border rounded p-2 mb-3"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 mb-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
                     onChange={e => setNewPhotos(Array.from(e.target.files))}
                 />
-                <button type="submit" className="mt-3 !bg-blue-800 text-red-700 px-4 py-2 rounded hover:!bg-teal-600">
+                <button type="submit" className="mt-3 bg-blue-800 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors duration-200">
                     Submit Story
                 </button>
             </form>
@@ -184,12 +184,12 @@ export default function Default() {
                 ))}
             </div>
             {showDeleteConfirm && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
-                    <div className="bg-white p-6 rounded shadow-lg text-center">
-                        <h2 className="text-lg font-semibold mb-4">Are you sure you want to delete the story: <span className='font-bold'>&quot;{stories.find(s => s.id === storyToDelete)?.title}&quot;</span>?</h2>
+                <div className="fixed inset-0 flex items-center justify-center bg-black/60 dark:bg-black/80 z-50">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-lg text-center max-w-md mx-4">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Are you sure you want to delete the story: <span className='font-bold'>&quot;{stories.find(s => s.id === storyToDelete)?.title}&quot;</span>?</h2>
                         <div className="flex justify-center gap-4">
                             <button
-                                className="!bg-red-600 text-white px-4 py-2 rounded hover:!bg-red-700"
+                                className="bg-red-600 dark:bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 dark:hover:bg-red-600 transition-colors duration-200"
                                 onClick={async () => {
                                     await handleDeleteStory(storyToDelete);
                                     setShowDeleteConfirm(false);
@@ -199,7 +199,7 @@ export default function Default() {
                                 Yes, Delete
                             </button>
                             <button
-                                className="!bg-gray-300 px-4 py-2 rounded hover:!bg-gray-400"
+                                className="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors duration-200"
                                 onClick={() => {
                                     setShowDeleteConfirm(false);
                                     setStoryToDelete(null);

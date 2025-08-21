@@ -328,3 +328,21 @@ export const getLocation = async (locationId) => {
   }
 };
 
+export const transcribeAudio = async (audioBlob) => {
+  try {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.wav');
+    
+    const response = await axios.post(`${API_URL}/transcribe`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error transcribing audio:', error);
+    throw error;
+  }
+};
+

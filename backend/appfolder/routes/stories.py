@@ -24,7 +24,7 @@ UPLOAD_DIR = PathLib("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 load_dotenv(dotenv_path='appfolder/.env')
-DATABASE_URL = os.getenv('SUPABASE_DB_URL1')
+DATABASE_URL = os.getenv('SUPABASE_DB_URL')
 print("DATABASE_URL", DATABASE_URL)
 print("CWD", os.getcwd())
 

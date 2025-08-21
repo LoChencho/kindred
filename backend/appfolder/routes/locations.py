@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 router = APIRouter()
 
 load_dotenv(dotenv_path='appfolder/.env')
-DATABASE_URL = os.getenv('SUPABASE_DB_URL1')
+DATABASE_URL = os.getenv('SUPABASE_DB_URL')
 
 # --- Location helpers ---
 async def get_or_create_location(conn, name, user_id, picture=None):

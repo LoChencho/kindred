@@ -172,17 +172,17 @@ export default function FamilyTreeView() {
         <div className={`relative ${level > 0 ? 'mt-8' : ''}`}>
           {/* Connection line from parent */}
           {level > 0 && (
-            <div className="absolute -top-4 left-1/2 w-px h-4 bg-gray-300 transform -translate-x-1/2"></div>
+            <div className="absolute -top-4 left-1/2 w-px h-4 bg-gray-300 dark:bg-gray-600 transform -translate-x-1/2"></div>
           )}
           
           {/* Person card */}
-          <div className="bg-white border-2 border-blue-200 rounded-lg p-3 shadow-md min-w-[200px]">
+          <div className="bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-3 shadow-md dark:shadow-lg min-w-[200px] transition-colors duration-200">
             <div className="flex items-center space-x-2 mb-2">
               <PersonAvatar personName={person.name} size="medium" />
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-800">{person.name}</h3>
+                <h3 className="font-semibold text-gray-800 dark:text-gray-100">{person.name}</h3>
                 {person.birth_date && (
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
                     {person.birth_date}
                     {person.death_date && ` - ${person.death_date}`}
                   </p>
@@ -190,7 +190,7 @@ export default function FamilyTreeView() {
               </div>
               <button
                 onClick={() => setEditingPerson(person.id)}
-                className="text-blue-600 hover:text-blue-800 text-sm"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm transition-colors duration-200"
               >
                 ✏️
               </button>
@@ -198,7 +198,7 @@ export default function FamilyTreeView() {
             
             {/* Gender indicator */}
             {person.gender && (
-              <div className="text-xs text-gray-500 mb-1">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                 {person.gender === 'M' ? '👨' : person.gender === 'F' ? '👩' : '👤'}
               </div>
             )}
@@ -206,15 +206,15 @@ export default function FamilyTreeView() {
 
           {/* Edit form */}
           {isEditing && (
-            <div className="absolute top-full left-0 mt-2 bg-white border rounded-lg p-3 shadow-lg z-10 min-w-[250px]">
-              <h4 className="font-semibold mb-2">Edit {person.name}</h4>
+            <div className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-lg dark:shadow-xl z-10 min-w-[250px] transition-colors duration-200">
+              <h4 className="font-semibold mb-2 text-gray-900 dark:text-gray-100">Edit {person.name}</h4>
               <div className="space-y-2">
                 <div>
-                  <label className="block text-xs text-gray-600">Gender:</label>
+                  <label className="block text-xs text-gray-600 dark:text-gray-400">Gender:</label>
                   <select
                     value={editForm.gender || person.gender || ''}
                     onChange={(e) => setEditForm({...editForm, gender: e.target.value})}
-                    className="w-full border rounded p-1 text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   >
                     <option value="">Select...</option>
                     <option value="M">Male</option>
@@ -222,27 +222,27 @@ export default function FamilyTreeView() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-600">Birth Date:</label>
+                  <label className="block text-xs text-gray-600 dark:text-gray-400">Birth Date:</label>
                   <input
                     type="date"
                     value={editForm.birthDate || person.birth_date || ''}
                     onChange={(e) => setEditForm({...editForm, birthDate: e.target.value})}
-                    className="w-full border rounded p-1 text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-600">Death Date:</label>
+                  <label className="block text-xs text-gray-600 dark:text-gray-400">Death Date:</label>
                   <input
                     type="date"
                     value={editForm.deathDate || person.death_date || ''}
                     onChange={(e) => setEditForm({...editForm, deathDate: e.target.value})}
-                    className="w-full border rounded p-1 text-sm"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded p-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   />
                 </div>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEditPerson(person.id)}
-                    className="bg-blue-600 text-white px-2 py-1 rounded text-sm hover:bg-blue-700"
+                    className="bg-blue-600 dark:bg-blue-500 text-white px-2 py-1 rounded text-sm hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
                   >
                     Save
                   </button>
@@ -251,7 +251,7 @@ export default function FamilyTreeView() {
                       setEditingPerson(null);
                       setEditForm({});
                     }}
-                    className="bg-gray-300 text-gray-700 px-2 py-1 rounded text-sm hover:bg-gray-400"
+                    className="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-sm hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors duration-200"
                   >
                     Cancel
                   </button>
@@ -266,7 +266,7 @@ export default function FamilyTreeView() {
           <div className="mt-4">
             {/* Connection lines to children */}
             <div className="flex justify-center mb-4">
-              <div className="w-px h-4 bg-gray-300"></div>
+              <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
             </div>
             <div className="flex space-x-8">
               {children.map(child => renderPersonNode(child, level + 1))}
@@ -280,16 +280,16 @@ export default function FamilyTreeView() {
   if (!user) {
     return (
       <div className="p-4 max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold text-blue-600 mb-6">Family Tree</h1>
-        <p className="text-gray-600">Please log in to view and manage your family tree.</p>
+        <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6">Family Tree</h1>
+        <p className="text-gray-600 dark:text-gray-300">Please log in to view and manage your family tree.</p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl">Loading family tree...</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
+        <div className="text-xl text-gray-900 dark:text-gray-100">Loading family tree...</div>
       </div>
     );
   }
@@ -297,37 +297,37 @@ export default function FamilyTreeView() {
   const rootNodes = getRootNodes();
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-6 py-12 transition-colors duration-300">
       <div className="mb-6">
-        <Link to="/" className="text-blue-600 hover:underline">&larr; Back to List</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/timeline" className="text-blue-600 hover:underline">View Timeline</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/people" className="text-blue-600 hover:underline">View by People</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/location" className="text-blue-600 hover:underline">View by Location</Link>
+        <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">&larr; Back to List</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/timeline" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View Timeline</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/people" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View by People</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/location" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View by Location</Link>
       </div>
       
-      <h1 className="text-3xl font-bold mb-8 text-center">🌳 Family Tree</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-gray-100">🌳 Family Tree</h1>
 
       {/* Action Buttons */}
       <div className="max-w-2xl mx-auto mb-8 flex gap-4">
         <button
           onClick={() => setShowAddPerson(!showAddPerson)}
-          className="flex-1 !bg-blue-600 text-white px-4 py-2 rounded-lg hover:!bg-blue-700 transition-colors"
+          className="flex-1 bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
         >
           {showAddPerson ? 'Cancel' : '+ Add New Person'}
         </button>
         
         <button
           onClick={() => setShowAddRelationship(!showAddRelationship)}
-          className="flex-1 !bg-green-600 text-white px-4 py-2 rounded-lg hover:!bg-green-700 transition-colors"
+          className="flex-1 bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200"
         >
           {showAddRelationship ? 'Cancel' : '+ Add Family Relationship'}
         </button>
         <button
           onClick={() => setShowAddFriendship(!showAddFriendship)}
-          className="flex-1 !bg-yellow-600 text-white px-4 py-2 rounded-lg hover:!bg-yellow-700 transition-colors"
+          className="flex-1 bg-yellow-600 dark:bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 dark:hover:bg-yellow-600 transition-colors duration-200"
         >
           {showAddFriendship ? 'Cancel' : '+ Add Friendship'}
         </button>
@@ -336,26 +336,26 @@ export default function FamilyTreeView() {
       {/* Add Person Form */}
       {showAddPerson && (
         <div className="max-w-md mx-auto mb-8">
-          <form onSubmit={handleAddPerson} className="bg-white p-4 rounded-lg shadow">
-            <h3 className="font-semibold mb-3">Add New Person</h3>
+          <form onSubmit={handleAddPerson} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg dark:shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <h3 className="font-semibold mb-3 text-gray-900 dark:text-gray-100">Add New Person</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name:</label>
                 <input
                   type="text"
                   value={newPerson.name}
                   onChange={(e) => setNewPerson({...newPerson, name: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   placeholder="Enter person's name"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gender:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gender:</label>
                 <select
                   value={newPerson.gender}
                   onChange={(e) => setNewPerson({...newPerson, gender: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                 >
                   <option value="">Select gender...</option>
                   <option value="M">Male</option>
@@ -363,17 +363,17 @@ export default function FamilyTreeView() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Birth Date:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Birth Date:</label>
                 <input
                   type="date"
                   value={newPerson.birthDate}
                   onChange={(e) => setNewPerson({...newPerson, birthDate: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full !bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                className="w-full bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200"
               >
                 Add Person
               </button>
@@ -385,15 +385,15 @@ export default function FamilyTreeView() {
       {/* Add Relationship Form */}
       {showAddRelationship && (
         <div className="max-w-md mx-auto mb-8">
-          <form onSubmit={handleAddRelationship} className="bg-white p-4 rounded-lg shadow">
-            <h3 className="font-semibold mb-3">Add Family Relationship</h3>
+          <form onSubmit={handleAddRelationship} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg dark:shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <h3 className="font-semibold mb-3 text-gray-900 dark:text-gray-100">Add Family Relationship</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Parent:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Parent:</label>
                 <select
                   value={newRelationship.parent}
                   onChange={(e) => setNewRelationship({...newRelationship, parent: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   required
                 >
                   <option value="">Select parent...</option>
@@ -403,11 +403,11 @@ export default function FamilyTreeView() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Child:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Child:</label>
                 <select
                   value={newRelationship.child}
                   onChange={(e) => setNewRelationship({...newRelationship, child: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   required
                 >
                   <option value="">Select child...</option>
@@ -418,7 +418,7 @@ export default function FamilyTreeView() {
               </div>
               <button
                 type="submit"
-                className="w-full !bg-green-600 text-white px-4 py-2 rounded hover:!bg-green-700 transition-colors"
+                className="w-full bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-600 transition-colors duration-200"
               >
                 Add Relationship
               </button>
@@ -430,15 +430,15 @@ export default function FamilyTreeView() {
       {/* Add Friendship Form */}
       {showAddFriendship && (
         <div className="max-w-md mx-auto mb-8">
-          <form onSubmit={handleAddFriendship} className="bg-white p-4 rounded-lg shadow">
-            <h3 className="font-semibold mb-3">Add Friendship</h3>
+          <form onSubmit={handleAddFriendship} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg dark:shadow-xl border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+            <h3 className="font-semibold mb-3 text-gray-900 dark:text-gray-100">Add Friendship</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Person 1:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Person 1:</label>
                 <select
                   value={newFriendship.person1}
                   onChange={(e) => setNewFriendship({...newFriendship, person1: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   required
                 >
                   <option value="">Select person...</option>
@@ -448,11 +448,11 @@ export default function FamilyTreeView() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Person 2:</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Person 2:</label>
                 <select
                   value={newFriendship.person2}
                   onChange={(e) => setNewFriendship({...newFriendship, person2: e.target.value})}
-                  className="w-full border rounded p-2"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                   required
                 >
                   <option value="">Select person...</option>
@@ -463,7 +463,7 @@ export default function FamilyTreeView() {
               </div>
               <button
                 type="submit"
-                className="w-full !bg-yellow-600 text-white px-4 py-2 rounded hover:!bg-yellow-700 transition-colors"
+                className="w-full bg-yellow-600 dark:bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 dark:hover:bg-yellow-600 transition-colors duration-200"
               >
                 Add Friendship
               </button>
@@ -474,17 +474,17 @@ export default function FamilyTreeView() {
 
       {/* Relationships List */}
       <div className="max-w-2xl mx-auto mb-8">
-        <h2 className="font-semibold mb-2 text-lg">Family Relationships</h2>
+        <h2 className="font-semibold mb-2 text-lg text-gray-900 dark:text-gray-100">Family Relationships</h2>
         {relationships.length === 0 ? (
-          <div className="text-gray-500">No relationships found.</div>
+          <div className="text-gray-500 dark:text-gray-400">No relationships found.</div>
         ) : (
-          <ul className="divide-y divide-gray-200">
+          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {relationships.map((rel, idx) => (
               <li key={idx} className="flex items-center justify-between py-2">
-                <span>{rel.parent_name} ➔ {rel.child_name} <span className="text-xs text-gray-400">({rel.relationship_type})</span></span>
+                <span className="text-gray-900 dark:text-gray-100">{rel.parent_name} ➔ {rel.child_name} <span className="text-xs text-gray-400 dark:text-gray-500">({rel.relationship_type})</span></span>
                 <button
                   onClick={() => handleDeleteRelationship(rel.parent_id, rel.child_id)}
-                  className="text-red-600 hover:underline text-sm ml-2"
+                  className="text-red-600 dark:text-red-400 hover:underline text-sm ml-2 transition-colors duration-200"
                 >
                   Delete
                 </button>
@@ -495,17 +495,17 @@ export default function FamilyTreeView() {
       </div>
       {/* Friendships List */}
       <div className="max-w-2xl mx-auto mb-8">
-        <h2 className="font-semibold mb-2 text-lg">Friendships</h2>
+        <h2 className="font-semibold mb-2 text-lg text-gray-900 dark:text-gray-100">Friendships</h2>
         {friendships.length === 0 ? (
-          <div className="text-gray-500">No friendships found.</div>
+          <div className="text-gray-500 dark:text-gray-400">No friendships found.</div>
         ) : (
-          <ul className="divide-y divide-gray-200">
+          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {friendships.map((f, idx) => (
               <li key={idx} className="flex items-center justify-between py-2">
-                <span>{f.person1} 🤝 {f.person2}</span>
+                <span className="text-gray-900 dark:text-gray-100">{f.person1} 🤝 {f.person2}</span>
                 <button
                   onClick={() => handleDeleteFriendship(f.person1_id, f.person2_id)}
-                  className="text-red-600 hover:underline text-sm ml-2"
+                  className="text-red-600 dark:text-red-400 hover:underline text-sm ml-2 transition-colors duration-200"
                 >
                   Delete
                 </button>
@@ -523,7 +523,7 @@ export default function FamilyTreeView() {
               {rootNodes.map(person => renderPersonNode(person))}
             </div>
           ) : (
-            <div className="text-center text-gray-600 py-12">
+            <div className="text-center text-gray-600 dark:text-gray-400 py-12">
               <p className="text-lg mb-4">No family relationships found.</p>
               <p>Add some people and relationships to see your family tree!</p>
             </div>

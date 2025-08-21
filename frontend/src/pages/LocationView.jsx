@@ -35,20 +35,20 @@ export default function LocationView() {
   }, [stories]);
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-6 py-12 transition-colors duration-300">
       <div className="mb-6">
-        <Link to="/" className="text-blue-600 hover:underline">&larr; Back to List</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/timeline" className="text-blue-600 hover:underline">View Timeline</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/people" className="text-blue-600 hover:underline">View by People</Link>
-        <span className="mx-2 text-gray-400">|</span>
-        <Link to="/family-tree" className="text-blue-600 hover:underline">Family Tree</Link>
+        <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">&larr; Back to List</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/timeline" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View Timeline</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/people" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">View by People</Link>
+        <span className="mx-2 text-gray-400 dark:text-gray-500">|</span>
+        <Link to="/family-tree" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200">Family Tree</Link>
       </div>
-      <h1 className="text-3xl font-bold mb-12 text-center">📍 Stories by Location</h1>
+      <h1 className="text-3xl font-bold mb-12 text-center text-gray-900 dark:text-gray-100">📍 Stories by Location</h1>
       
       {Object.keys(locationMap).length === 0 ? (
-        <div className="text-center text-gray-600">
+        <div className="text-center text-gray-600 dark:text-gray-400">
           <p>No stories found. Add some stories with locations to see them categorized here.</p>
         </div>
       ) : (

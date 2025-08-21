@@ -26,8 +26,8 @@ function PersonAvatar({ person, size = "small" }) {
 
   if (!personData && person !== "Uncategorized") {
     return (
-      <div className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center`}>
-        <span className={`${textSizes[size]} text-gray-500`}>👤</span>
+      <div className={`${sizeClasses[size]} rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center transition-colors duration-200`}>
+        <span className={`${textSizes[size]} text-gray-500 dark:text-gray-400`}>👤</span>
       </div>
     );
   }
@@ -38,11 +38,11 @@ function PersonAvatar({ person, size = "small" }) {
         <img 
           src={`http://localhost:8000${personData.picture}`}
           alt={personData ? personData.name : person}
-          className={`${sizeClasses[size]} rounded-full object-cover border border-gray-200`}
+          className={`${sizeClasses[size]} rounded-full object-cover border border-gray-200 dark:border-gray-600 transition-colors duration-200`}
         />
       ) : (
-        <div className={`${sizeClasses[size]} rounded-full bg-gray-200 flex items-center justify-center border border-gray-300`}>
-          <span className={`${textSizes[size]} text-gray-500`}>👤</span>
+        <div className={`${sizeClasses[size]} rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center border border-gray-300 dark:border-gray-500 transition-colors duration-200`}>
+          <span className={`${textSizes[size]} text-gray-500 dark:text-gray-400`}>👤</span>
         </div>
       )}
     </div>
